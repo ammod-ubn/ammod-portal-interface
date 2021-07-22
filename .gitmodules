@@ -1,0 +1,7 @@
+[submodule "steps/extraction/realsense-camera-trap"]
+	path = steps/extraction/realsense-camera-trap
+	url = git@github.com:ammod-ubn/realsense-camera-trap.git
+[submodule "steps/instance_segmentation/dmrcnn"]
+	path = steps/instance_segmentation/dmrcnn
+	url = git@github.com:ammod-ubn/dmrcnn.git
+	branch = lindenthal

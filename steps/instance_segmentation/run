@@ -1,0 +1,32 @@
+#!/usr/bin/env python
+import os
+import glob
+import tempfile
+import zipfile
+import shutil
+
+in_filepaths = sorted(glob.glob("/tmp/in/*.zip"))
+
+for in_filepath in in_filepaths:
+    in_file_id = os.path.splitext(os.path.basename(in_filepath))[0]
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        images_dir = os.path.join(tmp_dir, "images")
+        inference_dir = os.path.join(tmp_dir, "inference")
+        os.makedirs(inference_dir)
+        os.makedirs(images_dir)
+        with zipfile.ZipFile(in_filepath) as zf:
+            zf.extractall(images_dir)
+        if os.system(f'''
+            python inference.py \
+                --config-file lindenthal_r50_rgbd.yaml \
+                --data_base_path "{images_dir}" \
+                --camera csi \
+                --base_dataset lindenthal_morris_train \
+                MODEL.WEIGHTS weights/model_final.pth \
+                WITH_DEPTH True \
+                OUTPUT_DIR "{inference_dir}"
+            ''') != 0:
+            raise RuntimeError("inference failed")
+
+        if os.system(f'sudo cp --no-preserve=mode,ownership "{os.path.join(inference_dir, "inference", "coco_instances_results.json")}" "{os.path.join("/tmp/out", in_file_id + "-instseg-coco.json.txt")}"') != 0:
+            raise RuntimeError("copying inference result failed")

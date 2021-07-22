@@ -1,0 +1,14 @@
+#!/usr/bin/env python
+import os
+import glob
+import tempfile
+
+in_file_ids = sorted(list(set([os.path.splitext(os.path.basename(filepath))[0] for filepath in glob.glob("/tmp/in/*")])))
+
+with tempfile.TemporaryDirectory() as out_dir:
+    if os.system(f'python bag_to_images_csi.py --offline_disparity_rs "/tmp/in" "{out_dir}"') != 0:
+        raise RuntimeError("frame extraction failed")
+
+    for in_file_id in in_file_ids:
+        if os.system(f'cd "{out_dir}/all/{in_file_id}/" && zip -r -qq "/tmp/out/{in_file_id}-extracted.zip" ./*') != 0:
+            raise RuntimeError("compression failed")
