@@ -1,6 +1,7 @@
 # AMMOD Interface
 
 This is the interface of AMMOD Module 2.3 to the AMMOD API. This document serves as high-level documentation of this interface. Low-level documentation can be found in the respective source files. The goals of this interface is to:
+
 * upload raw data files from the sensor to the AMMOD API
 * process the raw data into higher-level information
 * be as generic, extensible and maintainable as possible
@@ -13,7 +14,7 @@ This document should be read in conjunction with the [AMMOD schema documentation
 * install requirements.txt: `pip install -r requirements.txt`
 * [make an account](https://ammod.gfbio.dev/oidc/authenticate/) for the AMMOD portal and notify the administrators to gain access to the API
 * copy `api_config.example.json` to `api_config.json` and insert your API credentials
-* for any processing step inside `steps/` that requires addition model weight files not stored inside the repository, download the corresponding weights
+* for any processing step inside `steps/` that requires additional model weight files not stored inside the repository, download the corresponding weights
 
 ## Architecture and Dataflow
 

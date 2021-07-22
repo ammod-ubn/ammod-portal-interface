@@ -7,20 +7,27 @@ from api_client import ApiClient
 from config import api_base_url, api_config_path, device_id, serial_number, location_latitude, location_longitude, timezone
 
 def main():
+    """
+    Uploads raw sensor data
+    """
     setup_logging()
 
-    argparser = argparse.ArgumentParser()
+    argparser = argparse.ArgumentParser(description="Uploads raw sensor data")
     argparser.add_argument("files", type=str, nargs="+")
     args = argparser.parse_args()
 
+    # construct API client
     client = ApiClient(api_base_url, api_config_path)
 
+    # get IDs of the files to upload (may be represented by a .bag, .mkv or both)
     file_ids = sorted(list(set([os.path.splitext(os.path.basename(f))[0] for f in args.files])))
     
+    # for each .bag-.mkv-pair
     for file_id in tqdm(file_ids):
+
+        # generate metadata
         paths = [path for path in args.files if os.path.splitext(os.path.basename(path))[0] == file_id]
         time = parse_raw_timestamp(file_id, timezone).isoformat()
-
         metadata = {
             "deviceID": device_id,
             "serialNumber": serial_number,
@@ -38,15 +45,16 @@ def main():
             },
             "files": [
                 {
-                "fileName": make_api_filename(p),
-                "fileSize": os.path.getsize(p) * 1e-6,  # in megabytes (MB)
-                "md5Checksum": checksum(p).hexdigest(),
+                "fileName": make_api_filename(p),  # make sure there are not collisions with other files
+                "fileSize": os.path.getsize(p) * 1e-6,  # file size in megabytes (MB)
+                "md5Checksum": checksum(p).hexdigest(),  # compute md5
                 }
                 for p in paths
             ],
-            "sourceFiles": [],
+            "sourceFiles": [],  # raw data, does not have prior processing steps
         }
 
+        # upload files
         file_handles = [open(p, "rb") for p in paths]
         client.upload_metadata(metadata, file_handles)
         [file_handle.close() for file_handle in file_handles]
