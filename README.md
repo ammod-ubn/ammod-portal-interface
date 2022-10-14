@@ -1,8 +1,8 @@
-# AMMOD Interface
+# AMMOD Portal Interface
 
-This is the interface of AMMOD Module 2.3 to the AMMOD API. This document serves as high-level documentation of this interface. Low-level documentation can be found in the respective source files. The goals of this interface is to:
+This is the interface of AMMOD Module 2.3 to the AMMOD Portal API. This document serves as high-level documentation of this interface. Low-level documentation can be found in the respective source files. The goals of this interface is to:
 
-* upload raw data files from the sensor to the AMMOD API
+* upload raw data files from the sensor to the AMMOD Portal API
 * process the raw data into higher-level information
 * be as generic, extensible and maintainable as possible
 
