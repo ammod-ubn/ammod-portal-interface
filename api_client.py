@@ -1,4 +1,5 @@
 from typing import IO, List
+import os
 import json
 import logging
 import io
@@ -15,8 +16,6 @@ class ApiClient:
 
     Attributes
     ----------
-    base_url : str
-        the URL of the API
     config_path : str
         path to config file
     config_vars : list
@@ -38,19 +37,16 @@ class ApiClient:
         downloads metadata and associtated files according to params to target_path in chunk_sized chunks
     """
 
-    def __init__(self, base_url: str, config_path: str, enable_logging=False) -> None:
+    def __init__(self, config_path: str, enable_logging=False) -> None:
         """
         Parameters
         ----------
-        base_url : str
-            the URL of the API
         config_path : str
             path to config file
         enable_logging : bool, optional
             whether to enable logging (default is False)
         """
 
-        self.base_url = base_url
         if enable_logging:
             # setup logging
             requests_log = logging.getLogger("requests.packages.urllib3")
@@ -59,7 +55,7 @@ class ApiClient:
 
         # load configuration from file
         self.config_path = config_path
-        self.config_vars = ["current_access_token", "current_refresh_token", "current_token_expiry"]
+        self.config_vars = ["base_url", "current_access_token", "current_refresh_token", "current_token_expiry"]
         self.load_config()
 
     def load_config(self):
@@ -117,7 +113,7 @@ class ApiClient:
 
             # use MultipartEncoder to handle large files without issues
             m = MultipartEncoder(fields={
-                "file1": ("metadata.json", metadata_file),
+                "file1": (os.path.splitext(metadata["files"][0]["fileName"])[0] + ".json", metadata_file),
                 **{
                     f"file{i+2}": (api_file["fileName"], f)
                     for i, (api_file, f) in enumerate(zip(metadata["files"], raw_data))

@@ -4,6 +4,8 @@ import hashlib
 import pytz
 import logging
 
+from config import device_id, serial_number
+
 def parse_raw_timestamp(raw_timestamp: str, timezone_name: str):
     """
     Parses timestamps of raw files
@@ -14,7 +16,7 @@ def make_api_filename(original_filename: str):
     """
     Make sure the API file names do not collide with other files
     """
-    return f"Lindenthal-Zoo-RGBD-{os.path.basename(original_filename)}"
+    return f"{device_id}-{serial_number}-csi-{os.path.basename(original_filename)}"
 
 def parse_api_filename(api_filename: str):
     """

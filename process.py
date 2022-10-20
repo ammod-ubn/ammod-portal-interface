@@ -7,7 +7,7 @@ import zipfile
 import contextlib
 from api_client import ApiClient
 from utils import checksum, step_name_to_docker_name, setup_logging
-from config import api_base_url, api_config_path
+from config import api_config_path
 
 def step(step_name: str, client: ApiClient, source_ids: List[str]):
     """
@@ -92,7 +92,7 @@ def main():
     argparser.add_argument("step_name", type=str, help="the name of the step to run")
     argparser.add_argument("source_ids", nargs="+", type=str, help="the IDs of the records which should be processed")
     args = argparser.parse_args()
-    step(args.step_name, ApiClient(api_base_url, api_config_path), args.source_ids)
+    step(args.step_name, ApiClient(api_config_path), args.source_ids)
 
 
 if __name__ == "__main__":

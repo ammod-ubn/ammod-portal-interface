@@ -4,7 +4,7 @@ from tqdm.auto import tqdm
 
 from utils import make_api_filename, parse_raw_timestamp, checksum, setup_logging
 from api_client import ApiClient
-from config import api_base_url, api_config_path, device_id, serial_number, location_latitude, location_longitude, timezone
+from config import api_config_path, device_id, serial_number, location_latitude, location_longitude, timezone, usable_for_research
 
 def main():
     """
@@ -17,7 +17,7 @@ def main():
     args = argparser.parse_args()
 
     # construct API client
-    client = ApiClient(api_base_url, api_config_path)
+    client = ApiClient(api_config_path)
 
     # get IDs of the files to upload (may be represented by a .bag, .mkv or both)
     file_ids = sorted(list(set([os.path.splitext(os.path.basename(f))[0] for f in args.files])))
@@ -43,6 +43,7 @@ def main():
                     "coordinates": [location_longitude, location_latitude],
                 }
             },
+            "usableForResearchPurposes": usable_for_research,
             "files": [
                 {
                 "fileName": make_api_filename(p),  # make sure there are not collisions with other files
